@@ -16,11 +16,16 @@
 
 package com.couchbase.sqoop.mapreduce.db;
 
+import com.cloudera.sqoop.lib.SqoopRecord;
+
 import com.couchbase.client.TapClient;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
@@ -29,15 +34,17 @@ import java.util.concurrent.TimeUnit;
 
 import javax.naming.ConfigurationException;
 
-
 import net.spy.memcached.tapmessage.MessageBuilder;
 import net.spy.memcached.tapmessage.ResponseMessage;
 import net.spy.memcached.tapmessage.TapStream;
+import net.spy.memcached.CachedData;
+import net.spy.memcached.transcoders.SerializingTranscoder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.RecordReader;
@@ -51,7 +58,7 @@ import org.apache.hadoop.util.ReflectionUtils;
  * key and DBWritables as value.
  */
 public class CouchbaseRecordReader<T extends DBWritable>
-    extends RecordReader<LongWritable, T> {
+    extends RecordReader<Text, T> {
 
   private static final Log LOG =
     LogFactory.getLog(CouchbaseRecordReader.class);
@@ -60,7 +67,7 @@ public class CouchbaseRecordReader<T extends DBWritable>
 
   private Configuration conf;
 
-  private LongWritable key = null;
+  private Text key = null;
 
   private T value = null;
 
@@ -83,8 +90,7 @@ public class CouchbaseRecordReader<T extends DBWritable>
       String user = dbConf.getUsername();
       String pass = dbConf.getPassword();
       String url = dbConf.getUrlProperty();
-      this.client = new TapClient(Arrays.asList(new URI(url)), user,
-          pass);
+      this.client = new TapClient(Arrays.asList(new URI(url)), user, pass);
     } catch (URISyntaxException e) {
       LOG.error("Bad URI Syntax: " + e.getMessage());
       client.shutdown();
@@ -97,7 +103,7 @@ public class CouchbaseRecordReader<T extends DBWritable>
   }
 
   @Override
-  public LongWritable getCurrentKey() throws IOException,
+  public Text getCurrentKey() throws IOException,
         InterruptedException {
     LOG.info("Key: " + key);
     return key;
@@ -173,50 +179,41 @@ public class CouchbaseRecordReader<T extends DBWritable>
     ResponseMessage message;
     while ((message = client.getNextMessage()) == null) {
       if (!client.hasMoreMessages()) {
+        LOG.error("No More Messages\n");
         return false;
       }
     }
 
-    byte[] mkey = null;
-    byte[] mvalue = null;
-    ByteBuffer buf;
-    int bufLen = 4;
-
-    mkey = message.getKey().getBytes();
-    bufLen += mkey.length;
-
-    mvalue = message.getValue();
-    bufLen += mvalue.length;
-    buf = ByteBuffer.allocate(bufLen);
-
-    if (key == null) {
-      key = new LongWritable();
-    }
     if (value == null) {
+      /* Will create a new value based on the generated ORM mapper. */
       value = ReflectionUtils.newInstance(inputClass, conf);
     }
 
-    key.set(client.getMessagesRead());
-    if (mkey != null) {
-      buf.put((byte)0);
-      buf.put((byte)mkey.length);
-      for (int i = 0; i < mkey.length; i++) {
-        buf.put(mkey[i]);
-      }
+    String recordKey = message.getKey();
+    if (recordKey == null) {
+      ((SqoopRecord)value).setField("Key", null);
+      LOG.fatal("Received record with no key.  Attempting to continue."
+        + "  ResponseMessage received:\n" + message);
+    } else {
+      ((SqoopRecord)value).setField("Key", recordKey);
     }
 
-    if (mvalue != null) {
-      buf.put((byte)0);
-      buf.put((byte)mvalue.length);
-      for (int i = 0; i < mvalue.length; i++) {
-        buf.put(mvalue[i]);
-      }
-    }
+    ((SqoopRecord)value).setField("Value", (deserialize(message)).toString());
 
-    ByteArrayInputStream in = new ByteArrayInputStream(buf.array());
-    DataInputStream dataIn = new DataInputStream(in);
-    ((Writable)value).readFields(dataIn);
-    dataIn.close();
+
     return true;
   }
+
+  /**
+   * Attempt to get the object represented by the given serialized bytes.
+   */
+  private Object deserialize(ResponseMessage message) {
+    SerializingTranscoder tc = new SerializingTranscoder();
+    CachedData d = new CachedData(message.getItemFlags(), message.getValue(),
+      CachedData.MAX_SIZE);
+    Object rv = null;
+    rv = tc.decode(d);
+    return rv;
+  }
+
 }

@@ -148,6 +148,7 @@ public class CouchbaseManager extends ConnManager {
   /**
    * Export data stored in HDFS into Membase/Couchbase.
    */
+  @Override
   public void exportTable(ExportJobContext context) throws IOException,
       ExportException {
     context.setConnManager(this);

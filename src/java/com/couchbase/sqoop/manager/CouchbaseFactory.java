@@ -36,6 +36,7 @@ public class CouchbaseFactory extends ManagerFactory {
   public static final Log LOG = LogFactory.getLog(
       DefaultManagerFactory.class.getName());
 
+  @Override
   public ConnManager accept(JobData data) {
     SqoopOptions options = data.getSqoopOptions();
 
