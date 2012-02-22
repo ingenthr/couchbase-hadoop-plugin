@@ -105,13 +105,13 @@ public class CouchbaseRecordReader<T extends DBWritable>
   @Override
   public Text getCurrentKey() throws IOException,
         InterruptedException {
-    LOG.info("Key: " + key);
+    LOG.trace("Key: " + key);
     return key;
   }
 
   @Override
   public T getCurrentValue() throws IOException, InterruptedException {
-    LOG.info("Value: " + value.toString());
+    LOG.trace("Value: " + value.toString());
     return value;
   }
 
