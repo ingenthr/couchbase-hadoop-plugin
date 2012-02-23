@@ -116,10 +116,11 @@ public class CouchbaseOutputFormat<K extends DBWritable, V>
             user, user, pass);
       } catch (IOException e) {
         client.shutdown();
-        e.printStackTrace();
+        LOG.fatal("Problem configuring CouchbaseClient for IO.", e);
       } catch (URISyntaxException e) {
         client.shutdown();
-        e.printStackTrace();
+        LOG.fatal("Could not configure CouchbaseClient with URL supplied: "
+          + url, e);
       }
     }
 
@@ -162,8 +163,8 @@ public class CouchbaseOutputFormat<K extends DBWritable, V>
 
     @Override
     public void write(K key, V value) throws IOException, InterruptedException {
-      String k = null;
-      String v = null;
+      String keyToAdd = null;
+      String valueToAdd = null;
       Writable w = (Writable)key;
       ByteArrayOutputStream in = new ByteArrayOutputStream();
       DataOutput dataIn = new DataOutputStream(in);
@@ -174,24 +175,24 @@ public class CouchbaseOutputFormat<K extends DBWritable, V>
         drainQ();
       }
 
-      int i = 0;
-      if (b[i] == 0) {
-        int klen = b[++i];
-        byte[] mkey = new byte[klen];
-        for (int j = 0; j < klen; j++) {
-          mkey[j] = b[++i];
-        }
-        k = new String(mkey);
-      }
-      if (b[++i] == 0) {
-        int vlen = b[++i];
-        byte[] mvalue = new byte[vlen];
-        for (int j = 0; j < vlen; j++) {
-          mvalue[j] = b[++i];
-        }
-        v = new String(mvalue);
-      }
-      opQ.add(new KV(k, v, client.set(k, 0, v)));
+//      int i = 0;
+//      if (b[i] == 0) {
+//        int klen = b[++i];
+//        byte[] mkey = new byte[klen];
+//        for (int j = 0; j < klen; j++) {
+//          mkey[j] = b[++i];
+//        }
+//        k = new String(mkey);
+//      }
+//      if (b[++i] == 0) {
+//        int vlen = b[++i];
+//        byte[] mvalue = new byte[vlen];
+//        for (int j = 0; j < vlen; j++) {
+//          mvalue[j] = b[++i];
+//        }
+//        v = new String(mvalue);
+//      }
+        boolean addCheck = opQ.add(new KV(keyToAdd, valueToAdd, client.set(keyToAdd, 0, valueToAdd)));
     }
   }
 }

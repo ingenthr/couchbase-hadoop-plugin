@@ -171,27 +171,27 @@ public class CouchbaseRecordReader<T extends DBWritable>
     ResponseMessage message;
     while ((message = client.getNextMessage()) == null) {
       if (!client.hasMoreMessages()) {
-        LOG.error("No More Messages\n");
+        LOG.info("All TAP messages have been received.\n");
         return false;
       }
     }
 
     if (value == null) {
-      /* Will create a new value based on the generated ORM mapper. */
+      /* Will create a new value based on the generated ORM mapper.
+       * This only happens the first time through.
+       */
       value = ReflectionUtils.newInstance(inputClass, conf);
     }
 
     String recordKey = message.getKey();
     if (recordKey == null) {
       ((SqoopRecord)value).setField("Key", null);
-      LOG.fatal("Received record with no key.  Attempting to continue."
+      LOG.error("Received record with no key.  Attempting to continue."
         + "  ResponseMessage received:\n" + message);
     } else {
       ((SqoopRecord)value).setField("Key", recordKey);
     }
-
     ((SqoopRecord)value).setField("Value", (deserialize(message)).toString());
-
 
     return true;
   }
