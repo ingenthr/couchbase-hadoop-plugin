@@ -34,19 +34,21 @@
     <dependency org="org.apache.sqoop" name="sqoop" rev="${sqoop.version}"
         conf="common->master">
       <artifact name="sqoop" type="jar"/>
-      <artifact name="sqoop" type="test-jar" ext="jar" m:classifier="tests"/>
+      <!-- artifact name="sqoop" type="test-jar" ext="jar" m:classifier="tests"/ -->
     </dependency>
 
+    <!-- dependency org="org.apache.sqoop" name="sqoop"
+        rev="${sqoop.version}" conf="common->master"/ -->
     <dependency org="org.apache.hadoop" name="hadoop-core"
-        rev="${hadoop-core.cloudera.version}" conf="common->master"/>
+        rev="${hadoop-core.version}" conf="common->master"/>
     <dependency org="org.apache.hadoop" name="hadoop-test"
-        rev="${hadoop-core.cloudera.version}" conf="common->master"/>
-    <dependency org="org.apache.hadoop" name="hadoop-hdfs"
-        rev="${hadoop.version}" conf="common->master"/>
-    <dependency org="org.apache.hadoop" name="hadoop-common"
-        rev="${hadoop.version}" conf="common->master"/>
+        rev="${hadoop-core.version}" conf="common->master"/>
+    <!-- dependency org="org.apache.hadoop" name="hadoop-hdfs"
+        rev="${hadoop.version}" conf="common->master"/ -->
+    <!-- dependency org="org.apache.hadoop" name="hadoop-common"
+        rev="${hadoop.version}" conf="common->master"/ -->
 
-    <dependency org="org.jboss.netty" name="netty"
+    <dependency org="io.netty" name="netty"
         rev="${netty.version}" conf="common->master"/>
     <dependency org="commons-cli" name="commons-cli"
         rev="${commons-cli.version}" conf="common->master"/>
@@ -69,15 +71,15 @@
         conf="common->master"/>
     <dependency org="hsqldb" name="hsqldb" rev="${hsqldb.version}"
         conf="common->master"/>
-    <dependency org="couchbase" name="couchbase-client" rev="${couchbase-client.version}"
+    <dependency org="com.couchbase.client" name="couchbase-client" rev="${couchbase-client.version}"
         conf="common->default"/>
-    <dependency org="spy" name="spymemcached" rev="${spymemcached.version}"
+    <dependency org="net.spy" name="spymemcached" rev="${spymemcached.version}"
         conf="common->default"/>
     <dependency org="commons-httpclient" name="commons-httpclient"
         rev="${commons-httpclient.version}" conf="common->master"/>
 
-    <dependency org="org.apache.hbase" name="hbase" rev="${hbase.version}"
-        conf="common->master">
+    <!-- dependency org="org.apache.hbase" name="hbase" rev="${hbase.version}"
+        conf="common->master" >
       <artifact name="hbase" type="jar"/>
       <artifact name="hbase" type="test-jar" ext="jar"/>
       <exclude org="com.sun.jersey" module="jersey-core"/>
@@ -85,7 +87,7 @@
       <exclude org="com.sun.jersey" module="jersey-server"/>
       <exclude org="org.apache.thrift" module="thrift"/>
       <exclude org="log4j" module="log4j"/>
-    </dependency>
+    </dependency -->
 
     <dependency org="checkstyle" name="checkstyle" rev="${checkstyle.version}"
         conf="checkstyle->default" />

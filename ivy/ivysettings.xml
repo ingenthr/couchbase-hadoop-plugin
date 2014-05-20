@@ -25,12 +25,17 @@
       override="false"/>
 
   <!-- Cloudera Maven Repository -->
-  <property name="releases.cloudera.com"
+  <!-- property name="releases.cloudera.com"
       value="https://repository.cloudera.com/content/repositories/releases/"
       override="false"/>
   <property name="cdh-releases.cloudera.com"
       value="https://repository.cloudera.com/content/groups/cdh-releases-rcs/"
-      override="false"/>
+      override="false"/ -->
+
+  <!-- Hortonworks Maven Repository -->
+    <property name="repo.hortonworks"
+              value="http://repo.hortonworks.com/content/repositories/releases/"
+              override="false"/>
 
   <!-- Couchbase Maven Repository -->
   <property name="repo.couchbase"
@@ -49,16 +54,19 @@
   <settings defaultResolver="default"/>
   <resolvers>
     <chain name="default" dual="true" checkmodified="true">
+      <ibiblio name="hortonworks-hdp-releases" root="${repo.hortonworks}"
+                 m2compatible="true" checkmodified="true" pattern="${maven2.pattern.ext}"/>
       <ibiblio name="maven2" root="${repo.maven.org}"
           pattern="${maven2.pattern.ext}" m2compatible="true"/>
 
-      <ibiblio name="cloudera-cdh-releases" root="${cdh-releases.cloudera.com}"
+      <!-- ibiblio name="cloudera-cdh-releases" root="${cdh-releases.cloudera.com}"
           pattern="${maven2.pattern.ext}" m2compatible="true"/>
       <ibiblio name="cloudera-releases" root="${releases.cloudera.com}"
-          pattern="${maven2.pattern.ext}" m2compatible="true"/>
-      <ibiblio name="apache-snapshot" root="${snapshot.apache.org}"
+          pattern="${maven2.pattern.ext}" m2compatible="true"/ -->
+      <!-- ibiblio name="apache-snapshot" root="${snapshot.apache.org}"
           m2compatible="true" checkmodified="true"
-          pattern="${maven2.pattern.ext}"/>
+          pattern="${maven2.pattern.ext}"/ -->
+
 
       <ibiblio name="couchbase-maven" root="${repo.couchbase}"
           pattern="${maven2.pattern.ext}" m2compatible="true"/>
