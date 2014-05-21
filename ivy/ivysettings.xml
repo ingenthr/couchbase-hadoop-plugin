@@ -54,8 +54,8 @@
   <settings defaultResolver="default"/>
   <resolvers>
     <chain name="default" dual="true" checkmodified="true">
-      <ibiblio name="hortonworks-hdp-releases" root="${repo.hortonworks}"
-                 m2compatible="true" checkmodified="true" pattern="${maven2.pattern.ext}"/>
+      <!-- ibiblio name="hortonworks-hdp-releases" root="${repo.hortonworks}"
+                 m2compatible="true" checkmodified="true" pattern="${maven2.pattern.ext}"/ -->
       <ibiblio name="maven2" root="${repo.maven.org}"
           pattern="${maven2.pattern.ext}" m2compatible="true"/>
 
