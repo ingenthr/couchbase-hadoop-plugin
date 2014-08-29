@@ -1,14 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager" inherit-compiler-output="true">
+  <component name="FacetManager">
+    <facet type="IvyIDEA" name="IvyIDEA">
+      <configuration ivyFile="$MODULE_DIR$/../ivy.xml" useProjectSettings="true" useCustomIvySettings="true" ivySettingsFile="" onlyResolveSelectedConfigs="false">
+        <propertiesSettings>
+          <propertiesFiles includeProjectLevelPropertiesFiles="true">
+            <fileName>$MODULE_DIR$/../ivy/libraries.properties</fileName>
+          </propertiesFiles>
+        </propertiesSettings>
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/perftest" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/java/com" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/java/com/couchbase" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/java/com/couchbase/sqoop" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/java/com/couchbase/sqoop/lib" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/java/com/couchbase/sqoop/manager" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/java/com/couchbase/sqoop/mapreduce" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/java/com/couchbase/sqoop/mapreduce/db" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="common" level="project" />
   </component>
 </module>
 
